@@ -1,0 +1,35 @@
+{
+  "name": "loadbalancer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "compile": "tsc",
+    "start": "SET PORT=80 && node load-balancer.js",
+    "dev:lb": "npx ts-node --files lb.index.ts",
+    "dev:be": "npx ts-node be.index.ts",
+    "start:lb": "node ./dist/lb.index.js",
+    "start:be": "node ./dist/be.index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async-mutex": "^0.5.0",
+    "axios": "^1.7.7",
+    "axios-retry": "^4.5.0",
+    "cluster": "^0.7.7",
+    "cookie-parser": "^1.4.6",
+    "express": "^4.21.0",
+    "http-proxy-middleware": "^3.0.3",
+    "https": "^1.0.0",
+    "joi": "^17.13.3",
+    "loadbalancer": "file:",
+    "node-run-cmd": "^1.0.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.7.4",
+    "typescript": "^5.6.2"
+  }
+}
