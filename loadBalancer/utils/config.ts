@@ -1,0 +1,125 @@
+import Joi from 'joi';
+import _config from '../../config.json';
+import { LbAlgorithm } from './enums';
+
+// Type Assertion
+const config = _config as unknown as IConfig;
+
+
+// Interface for Config Object
+interface IConfig {
+    lbPORT: number;
+
+    lbAlgo: LbAlgorithm;
+    _lbAlgo: 'rand' | 'rr' | 'wrr';
+
+    be_servers: {
+        domain: string;
+        weight?: number;
+    }[]
+
+    be_retries: number;
+    be_retry_delay: number;
+
+    be_ping_path: string;
+    be_ping_retries: number;
+    be_ping_retry_delay: number;
+
+    health_check_interval: number;
+
+    send_alert_webhook: string;
+    alert_on_be_failure_streak: number;
+    alert_on_all_be_failure_streak: number;
+
+    enableSelfHealing: boolean;
+    _test_only_chances_of_healing_server: number;
+}
+
+// Joi Schema for Config Object
+const config_joi_schema = Joi.object({
+    lbPORT: Joi.number().required(),
+
+    lbAlgo: Joi.string().optional(),
+    _lbAlgo: Joi.string().valid('rand', 'rr', 'wrr').required(),
+
+    be_servers: Joi.array().min(1)
+        .items(Joi.object({
+            domain: Joi.string().required(),
+
+            weight: Joi.number().when('lbAlgo', {
+                is: Joi.string().valid('wrr'),
+                then: Joi.required(),
+                otherwise: Joi.optional()
+            })
+        })),
+    
+    be_retries: Joi.number().min(0).max(config.be_servers.length).optional(),
+    be_retry_delay: Joi.number().min(0).max(10000).optional(),
+    
+    be_ping_path: Joi.string().required(),
+    be_ping_retries: Joi.number().min(0).max(config.be_servers.length).optional(),
+    be_ping_retry_delay: Joi.number().min(0).max(10000).optional(),
+    
+    health_check_interval: Joi.number().min(10* 1000).max(300 * 1000).optional(),
+    
+    send_alert_webhook: Joi.string().required(),
+    alert_on_be_failure_streak: Joi.number().min(3).max(100).optional(),
+    alert_on_all_be_failure_streak: Joi.number().min(1).max(100).optional(),
+
+    enableSelfHealing: Joi.bool().required(),
+    _test_only_chances_of_healing_server: Joi.number().min(0.1).max(1).optional()
+})
+
+
+// Config Class
+export class Config {
+
+    // Get Config Object
+    static getConfig() {
+        config.lbPORT = config.lbPORT ?? 80;
+        config.lbAlgo = Config.configAlgoTypeToLbAlgorithm(config._lbAlgo);
+
+        config.be_retries = config.be_retries ?? 3;
+        config.be_retry_delay = config.be_retry_delay ?? 200;
+
+        config.be_ping_path = config.be_ping_path ?? '/ping'
+        config.be_ping_retries = config.be_ping_retries ?? config.be_retries ?? 3;
+        config.be_ping_retry_delay = config.be_ping_retry_delay ?? config.be_retry_delay ?? 500;
+        
+        config.health_check_interval = config.health_check_interval ?? 30 * 1000;
+        
+        config.alert_on_be_failure_streak = config.alert_on_be_failure_streak ?? 3;
+        config.alert_on_all_be_failure_streak = config.alert_on_all_be_failure_streak ?? 3;
+
+        config.enableSelfHealing = config.enableSelfHealing ?? true;
+        config._test_only_chances_of_healing_server = config._test_only_chances_of_healing_server ?? 0.5;
+        
+        //
+        
+        return config;
+    }
+
+    // Validate Config Object using Joi Schema
+    static validate() {
+        const validation = config_joi_schema.validate(config);
+
+        if (validation.error) {
+            throw new Error(`[ConfigError] ${validation.error.details[0].message}`)
+        }
+
+        console.log('[Success] Validated Config');
+        return true;
+    }
+
+    // Convert Config Algorithm Type to Load Balancer Algorithm
+    static configAlgoTypeToLbAlgorithm(configAlgoType: IConfig['_lbAlgo']) {
+        switch (configAlgoType) {
+            case 'rand': return LbAlgorithm.RANDOM;
+            case 'rr': return LbAlgorithm.ROUND_ROBIN;
+            case 'wrr': return LbAlgorithm.WEIGHTED_ROUND_ROBIN;
+
+            default: throw new Error(`[ConfigError] configAlgoTypeToLbAlgorithm: Didn\'t find ${configAlgoType}`);
+        }
+    }
+
+}

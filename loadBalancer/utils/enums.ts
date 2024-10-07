@@ -5,6 +5,7 @@ export enum LbAlgorithm {
     WEIGHTED_ROUND_ROBIN = 'wrr',
 }
 
+// Enumerations for Load Balancer Health Check
 export enum BEServerHealth {
     UNHEALTHY = 'un_healthy',
     HEALTHY = 'healthy'
