@@ -95,12 +95,6 @@ export class LBServer implements ILBServer {
             // this.close();
         });
 
-        // process.on('SIGTERM', () => {
-        //     console.info('SIGTERM signal received.');
-        //     this.close();
-        // })
-
-
         this.hc.performHealthCheckOnAllServers();
         this.hc.startHealthCheck();
     }
