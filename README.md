@@ -21,14 +21,14 @@ This TypeScript load balancer project replicates features seen in popular load b
 By default, the load balancer expects 3 backend servers to be running on ports `8081`, `8082`, and `8083`.
 
 ### Running Backend Servers:
-\`\`\`bash
+```bash
 npm run dev:be 8081
-\`\`\`
+```
 
 ### Running the Load Balancer:
-\`\`\`bash
+```bash
 npm run dev:lb 8000
-\`\`\`
+```
 
 Now, start sending requests to the load balancer at `localhost:8000`.
 
@@ -57,7 +57,7 @@ Now, start sending requests to the load balancer at `localhost:8000`.
 
 The project uses a `config.json` file for configuration:
 
-\`\`\`json
+```json
 {
   "lbPORT": 8000,
   "_lbAlgo": "rr",
@@ -78,7 +78,7 @@ The project uses a `config.json` file for configuration:
   "enableSelfHealing": true,
   "_test_only_chances_of_healing_server": 0.5
 }
-\`\`\`
+```
 
 - **lbPORT**: The port on which the load balancer runs.
 - **_lbAlgo**: Load balancing algorithm (values: `rand`, `rr`, `wrr`).
