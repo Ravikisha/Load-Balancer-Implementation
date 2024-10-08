@@ -2,6 +2,8 @@
 # Load Balancer Implementation in TypeScript
 This TypeScript load balancer project replicates features seen in popular load balancers like NGINX and HAProxy. It supports multiple load balancing algorithms (Random, Round-Robin, Weighted-Round-Robin) and performs health checks on backend servers. The system includes features for self-healing, retry mechanisms, and webhook alerts for server failures. It's easily configurable through a config.json file for various settings and algorithms.
 
+![Poster](./docs/poster.png)
+
 
 ## Features
 - **Easy Configuration**: Manage load balancer settings using a `config.json` file.
