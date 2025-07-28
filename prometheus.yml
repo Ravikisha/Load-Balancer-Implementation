@@ -1,0 +1,11 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: 'load_balancer'
+    static_configs:
+      - targets: ['172.16.141.56:8000']
+
+  - job_name: 'backends'
+    static_configs:
+      - targets: ['172.16.141.56:8081', '172.16.141.56:8082', '172.16.141.56:8083']
