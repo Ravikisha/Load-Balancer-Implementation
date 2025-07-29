@@ -8,5 +8,6 @@ export enum LbAlgorithm {
 // Enumerations for Load Balancer Health Check
 export enum BEServerHealth {
     UNHEALTHY = 'un_healthy',
-    HEALTHY = 'healthy'
+    HEALTHY = 'healthy',
+    UP = "UP"
 }
